@@ -1,4 +1,5 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { IProduct } from './product';
 import { ProductService } from './product.service';
 
@@ -7,15 +8,17 @@ import { ProductService } from './product.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit, OnChanges {
+export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   title ="Product list ";
   message!:string;
   imageWidth=50;
   imageMargin=4;
   showImage =false;
+  sub!: Subscription;
   
   private _listFilter: string = '';
   products: IProduct[]=[];
+  errorMessage: any;
   public get listFilter(): string {
     return this._listFilter;
   }
@@ -32,12 +35,23 @@ export class ProductListComponent implements OnInit, OnChanges {
   constructor(private productService: ProductService) { 
 
   }
+  
 
   ngOnInit(): void {
-    this.products = this.productService.getProducts();
-    this.filteredProducts = this.products;
+    this.sub= this.productService.getProducts().subscribe({
+      next : (data: IProduct[])=>{
+        console.log("Data received: ", data);
+        this.products = data;
+        this.filteredProducts = this.products;
+      },
+      error: err => this.errorMessage = err
+    });
   }
-  
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+    console.log("On Destroy")
+    throw new Error('Method not implemented.');
+  }
   ngOnChanges():void{
 
   }
