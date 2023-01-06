@@ -4,7 +4,6 @@ import { IProduct } from './product';
 import { ProductService } from './product.service';
 
 @Component({
-  selector: 'pm-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
@@ -19,6 +18,7 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   private _listFilter: string = '';
   products: IProduct[]=[];
   errorMessage: any;
+
   public get listFilter(): string {
     return this._listFilter;
   }
@@ -46,11 +46,12 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
       },
       error: err => this.errorMessage = err
     });
+    
   }
   ngOnDestroy(): void {
     this.sub.unsubscribe();
-    console.log("On Destroy")
-    throw new Error('Method not implemented.');
+    console.log("On Destroy");
+   
   }
   ngOnChanges():void{
 
